@@ -1,0 +1,20 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: azure-pipelines-setup
+  namespace: azure-devops
+spec:
+  ttlSecondsAfterFinished: 300
+  template:
+    spec:
+      restartPolicy: Never
+      containers:
+        - name: azure-pipelines-agent
+          image: luisfroliveira/azure-pipelines-agent-keda:latest
+          imagePullPolicy: Always
+          env:
+            - name: AZP_AGENT_NAME
+              value: azure-template  # precisa incluir "template"
+          envFrom:
+            - secretRef:
+                name: pipeline-auth

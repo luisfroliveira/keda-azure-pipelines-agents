@@ -1,0 +1,30 @@
+apiVersion: keda.sh/v1alpha1
+kind: ScaledJob
+metadata:
+  name: azure-pipelines-scaledjob
+  namespace: azure-devops
+spec:
+  triggers:
+    - type: azure-pipelines
+      metadata:
+        poolName: "lab-keda"
+        organizationURLFromEnv: "AZP_URL"
+        personalAccessTokenFromEnv: "AZP_TOKEN"
+  jobTargetRef:
+    ttlSecondsAfterFinished: 300
+    template:
+      spec:
+        restartPolicy: Never
+        containers:
+          - name: azure-pipelines-agent
+            image: luisfroliveira/azure-pipelines-agent-keda:latest
+            imagePullPolicy: Always
+            envFrom:
+              - secretRef:
+                  name: pipeline-auth
+  pollingInterval: 10
+  successfulJobsHistoryLimit: 5
+  failedJobsHistoryLimit: 5
+  maxReplicaCount: 10
+  rollout:
+    strategy: gradual
