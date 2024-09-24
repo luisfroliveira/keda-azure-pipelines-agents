@@ -95,7 +95,7 @@ if ! grep -q "template" <<< "$AZP_AGENT_NAME"; then
   trap 'cleanup; exit 143' TERM
 
 else
-  # sair imediatmente ao ser job-template
+  # sair do template agent após a configuração
   trap - EXIT
   exit 0
 fi
